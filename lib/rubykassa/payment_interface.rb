@@ -1,12 +1,12 @@
 # -*- encoding : utf-8 -*-
 require 'rubykassa/signature_generator'
 
-module Rubykassa  
+module Rubykassa
   class PaymentInterface
     include SignatureGenerator
 
     PARAMS_CONFORMITY = {
-      login:       "MrchLogin",
+      login:       "MerchantLogin",
       total:       "OutSum",
       invoice_id:  "InvId",
       signature:   "SignatureValue",
@@ -28,15 +28,17 @@ module Rubykassa
     end
 
     def base_url
-      test_mode? ? "http://test.robokassa.ru/Index.aspx" : "https://merchant.roboxchange.com/Index.aspx"
+      test_mode? ? "https://auth.robokassa.ru/Merchant/Index.aspx?IsTest=1&" : "https://auth.robokassa.ru/Merchant/Index.aspx?"
     end
 
     def pay_url(extra_params = {})
       extra_params = extra_params.slice(:currency, :description, :email, :culture)
 
-      "#{base_url}?" + initial_options.merge(extra_params).map do |key, value| 
+      "#{base_url}" + initial_options.merge(extra_params).map do |key, value|
         if key =~ /^shp/
           "#{key}=#{value}"
+        elsif key == :total
+          "#{PARAMS_CONFORMITY[key]}=#{sprintf("%.2f", value)}"
         else
           "#{PARAMS_CONFORMITY[key]}=#{value}"
         end
