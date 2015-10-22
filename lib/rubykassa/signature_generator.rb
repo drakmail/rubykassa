@@ -11,9 +11,9 @@ module Rubykassa
       when :payment
         [Rubykassa.login, sprintf("%.2f", @total), @invoice_id, Rubykassa.first_password, custom_params].flatten.join(":")
       when :result
-        [sprintf("%.2f", @total), @invoice_id, Rubykassa.second_password, custom_params].flatten.join(":")
+        [@total, @invoice_id, Rubykassa.second_password, custom_params].flatten.join(":")
       when :success
-        [sprintf("%.2f", @total), @invoice_id, Rubykassa.first_password, custom_params].flatten.join(":")
+        [@total, @invoice_id, Rubykassa.first_password, custom_params].flatten.join(":")
       end
     end
 
